@@ -93,10 +93,58 @@ class Ship {
 
     if (this.board === 'enemigo') {
       this.positions.forEach((position) => {
-        cellsEnemigo[position].classList.add('ship');
+        cellsEnemigo[position].classList.add('shipEnemigo');
       });
     }
   }
+}
+
+//************************ /
+// Logica del juego
+//************************ /
+
+// Hay que acabar la logica para elegir un ganador
+
+function ganar() {
+  if (!(cellsEnemigo.some(item => item.classList.contains('shipEnemigo')))) {
+    alert('you won')
+  }
+  if (!(cellsAmigo.some(item => item.classList.contains('ship')))) {
+    alert('you lost')
+  }
+}
+
+function ataqueAliado(event) {
+  console.log(event)
+  if (event.target.classList.value !== 'shipEnemigo') {
+    cellsEnemigo[event.target.innerText].classList.add('agua')
+  } 
+  if (event.target.classList.value === 'shipEnemigo') {
+    cellsEnemigo[event.target.innerText].classList.remove('shipEnemigo')
+    cellsEnemigo[event.target.innerText].classList.add('boom')
+    console.log('hola')
+  }
+  ataqueEnemigo()
+  console.log(cellsEnemigo)
+  ganar()
+}
+
+// Hay un error al ser math random puede repetir numeros hay que revisarlo
+
+function ataqueEnemigo() {
+  let ataque
+  ataque = Math.floor(Math.random() * cellsAmigo.length)
+  if (cellsAmigo[ataque].classList.value === 'ship') {
+    cellsAmigo[ataque].classList.remove('ship')
+    setTimeout(() => 
+      cellsAmigo[ataque].classList.add('boom')
+    , 500)
+  } else {
+    setTimeout(() => 
+      cellsAmigo[ataque].classList.add('agua')
+    , 500)
+  }
+  console.log(cellsAmigo)
 }
 
 const portaviones = new Ship({
@@ -127,10 +175,46 @@ const fragata = new Ship({
   positionInital: 61,
 });
 
+const portavionesEnemigo = new Ship({
+  type: 'portaviones',
+  orientation: 'horizontal',
+  board: 'enemigo',
+  positionInital: 60,
+});
+
+const buqueEnemigo = new Ship({
+  type: 'buque',
+  orientation: 'vertical',
+  board: 'enemigo',
+  positionInital: 15,
+});
+
+const lanchaEnemigo = new Ship({
+  type: 'lancha',
+  orientation: 'horizontal',
+  board: 'enemigo',
+  positionInital: 8,
+});
+
+const fragataEnemigo = new Ship({
+  type: 'fragata',
+  orientation: 'vertical',
+  board: 'enemigo',
+  positionInital: 48,
+});
+
 portaviones.render();
 buque.render();
 lancha.render();
 fragata.render();
+portavionesEnemigo.render();
+buqueEnemigo.render();
+lanchaEnemigo.render();
+fragataEnemigo.render();
+
+console.log(cellsEnemigo)
+
+window.addEventListener('click', ataqueAliado)
 
 // TODO:
 // Evitar que barcos se solapen
